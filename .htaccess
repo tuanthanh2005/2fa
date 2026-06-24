@@ -1,0 +1,11 @@
+RewriteEngine On
+
+# Allow direct access to existing physical files or directories in public/
+RewriteCond public/$1 -f [OR]
+RewriteCond public/$1 -d
+RewriteRule ^(.*)$ public/$1 [L]
+
+# Redirect all other requests to public/index.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ public/index.php [L,QSA]
