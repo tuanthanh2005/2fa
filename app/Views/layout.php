@@ -6,6 +6,7 @@
     
     <!-- Primary Meta Tags -->
     <title><?= htmlspecialchars($title ?? $config['site_title']) ?></title>
+    <link rel="icon" type="image/png" href="<?= BASE_URL ?>/fav.png">
     <meta name="title" content="<?= htmlspecialchars($title ?? $config['site_title']) ?>">
     <meta name="description" content="<?= htmlspecialchars($description ?? $config['site_description']) ?>">
     <meta name="keywords" content="<?= htmlspecialchars($keywords ?? $config['site_keywords']) ?>">
