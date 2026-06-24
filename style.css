@@ -94,6 +94,8 @@ html {
     scroll-behavior: smooth;
     font-size: 16px;
     height: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
 }
 
 body {
@@ -379,6 +381,7 @@ main.container {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    flex-wrap: wrap;
 }
 
 .badge {
@@ -432,6 +435,8 @@ body:not(.user-is-pro) .badge-pro {
     font-size: 0.95rem;
     line-height: 1.5;
     resize: vertical;
+    word-break: break-all;
+    white-space: pre-wrap;
     transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
