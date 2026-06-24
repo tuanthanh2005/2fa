@@ -19,14 +19,14 @@
     <meta property="og:url" content="https://2fa.center/">
     <meta property="og:title" content="<?= htmlspecialchars($title ?? $config['site_title']) ?>">
     <meta property="og:description" content="<?= htmlspecialchars($description ?? $config['site_description']) ?>">
-    <meta property="og:image" content="https://2fa.center/assets/og-image.jpg">
+    <meta property="og:image" content="https://2fa.center/fav.png">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://2fa.center/">
     <meta property="twitter:title" content="<?= htmlspecialchars($title ?? $config['site_title']) ?>">
     <meta property="twitter:description" content="<?= htmlspecialchars($description ?? $config['site_description']) ?>">
-    <meta property="twitter:image" content="https://2fa.center/assets/og-image.jpg">
+    <meta property="twitter:image" content="https://2fa.center/fav.png">
 
     <!-- Canonical URL -->
     <link rel="canonical" href="https://2fa.center/">
