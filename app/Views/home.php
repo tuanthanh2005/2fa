@@ -4,7 +4,6 @@
     <div class="card main-tool-card">
         <div class="card-title-area">
             <h2>Công cụ lấy mã 2FA hàng loạt</h2>
-            <span class="badge" style="background-color: var(--success-light); color: var(--success);">100% Miễn Phí</span>
         </div>
 
         <!-- Input area -->
