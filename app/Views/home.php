@@ -10,11 +10,7 @@
         <!-- Input area -->
         <div class="form-group">
             <label for="2fa-input" class="form-label">Nhập khóa bảo mật 2FA của bạn (Mỗi dòng một khóa):</label>
-            <textarea id="2fa-input" class="textarea-2fa" placeholder="Nhập định dạng bất kỳ, ví dụ:
-JBSWY3DPEHPK3PXP
-Facebook | JBSWY3DPEHPK3PXP
-Gmail: JBSWY3DPEHPK3PXP
-otpauth://totp/Google:user@gmail.com?secret=JBSWY3DPEHPK3PXP"></textarea>
+            <textarea id="2fa-input" class="textarea-2fa" placeholder="Ví dụ: JBSWY3DPEHPK3PXP"></textarea>
             
             <div class="textarea-footer">
                 <span id="limit-indicator">Hỗ trợ nhập tối đa <?= htmlspecialchars($config['line_limit'] ?? 500) ?> dòng</span>
