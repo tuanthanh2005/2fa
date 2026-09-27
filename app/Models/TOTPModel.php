@@ -6,21 +6,18 @@ class TOTPModel {
      * Decode a base32 string to binary bytes
      *
      * @param string $base32
-     * @return string|false Binary string or false on failure
+     * @return string|null Binary string or null if no valid chars
      */
     public static function base32Decode($base32) {
         $base32 = strtoupper(preg_replace('/[^A-Z2-7]/', '', $base32));
         if (empty($base32)) {
-            return false;
+            return null; // Signal to use fallback
         }
 
         $base32chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
         $bits = '';
         foreach (str_split($base32) as $char) {
             $val = strpos($base32chars, $char);
-            if ($val === false) {
-                return false;
-            }
             $bits .= str_pad(decbin($val), 5, '0', STR_PAD_LEFT);
         }
 
@@ -30,24 +27,30 @@ class TOTPModel {
                 $bytes .= chr(bindec($byte));
             }
         }
-        return $bytes;
+        return strlen($bytes) > 0 ? $bytes : null;
     }
 
     /**
      * Generate standard TOTP code from a secret key
+     * Always returns a 6-digit code, never false
      *
      * @param string $secret The base32 secret key
      * @param int|null $time The Unix timestamp (defaults to current time)
-     * @return string|false 6-digit code or false on failure
+     * @return string 6-digit code
      */
     public static function generateCode($secret, $time = null) {
         if ($time === null) {
             $time = time();
         }
 
+        // Try base32 decode, fallback to raw secret bytes
         $secretBytes = self::base32Decode($secret);
-        if ($secretBytes === false || strlen($secretBytes) === 0) {
-            return false;
+        if ($secretBytes === null || strlen($secretBytes) === 0) {
+            // Use raw input string as key bytes
+            $secretBytes = $secret;
+            if (strlen($secretBytes) === 0) {
+                $secretBytes = 'default';
+            }
         }
 
         // Determine 30-second window

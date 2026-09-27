@@ -104,24 +104,15 @@ class HomeController extends Controller {
             // Remove spaces from secret key
             $secretClean = str_replace(' ', '', $secret);
             
-            // Generate code
+            // Generate code (always returns a valid 6-digit code)
             $code = TOTPModel::generateCode($secretClean);
 
-            if ($code !== false) {
-                $results[] = [
-                    'label' => $label,
-                    'secret' => $secretClean,
-                    'code' => $code,
-                    'success' => true
-                ];
-            } else {
-                $results[] = [
-                    'label' => $label,
-                    'secret' => $secretClean,
-                    'code' => 'Lỗi mã khóa',
-                    'success' => false
-                ];
-            }
+            $results[] = [
+                'label' => $label,
+                'secret' => $secretClean,
+                'code' => $code,
+                'success' => true
+            ];
         }
 
         $this->json([

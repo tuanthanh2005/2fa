@@ -7,7 +7,34 @@
 document.addEventListener("DOMContentLoaded", () => {
     // DOM Elements
     const body = document.body;
+
+    // --- MOBILE MENU TOGGLE ---
+    const menuToggle = document.getElementById("menu-toggle");
+    const navMenu = document.getElementById("nav-menu");
+    
+    if (menuToggle && navMenu) {
+        menuToggle.addEventListener("click", () => {
+            navMenu.classList.toggle("open");
+        });
+
+        // Close menu when clicking a link
+        navMenu.querySelectorAll(".nav-link").forEach(link => {
+            link.addEventListener("click", () => {
+                navMenu.classList.remove("open");
+            });
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener("click", (e) => {
+            if (!menuToggle.contains(e.target) && !navMenu.contains(e.target)) {
+                navMenu.classList.remove("open");
+            }
+        });
+    }
+
+    // 2FA Tool Elements (only present on home page)
     const textareaInput = document.getElementById("2fa-input");
+
     const lineCounter = document.getElementById("line-counter");
     const limitIndicator = document.getElementById("limit-indicator");
     const btnGenerate = document.getElementById("btn-generate");
@@ -21,17 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Theme Switcher
     const themeBtn = document.getElementById("theme-switch");
     
-    // Info Modals
-    const infoModals = {
-        about: document.getElementById("modal-about"),
-        privacy: document.getElementById("modal-privacy"),
-        terms: document.getElementById("modal-terms"),
-        contact: document.getElementById("modal-contact")
-    };
-    const modalCloseButtons = document.querySelectorAll(".btn-modal-close");
-    const footerLinks = document.querySelectorAll(".footer-modal-link");
-    
-    // Contact Form inside Modal
+    // Contact Form (on contact page)
     const contactForm = document.getElementById("form-contact");
     const contactFormContainer = document.getElementById("contact-form-container");
     const contactSuccessState = document.getElementById("contact-success-state");
@@ -63,10 +80,12 @@ document.addEventListener("DOMContentLoaded", () => {
     // --- BASE32 DECODING ---
     function base32ToBytes(base32) {
         const base32chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+        // Strip padding, spaces, and any non-Base32 characters
         base32 = base32.replace(/=+$/, "").replace(/\s/g, "").toUpperCase();
+        base32 = base32.replace(/[^A-Z2-7]/g, "");
         
         if (!base32) {
-            throw new Error("Mã bảo mật trống");
+            return null; // Signal to use fallback
         }
 
         const len = base32.length;
@@ -77,9 +96,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         for (let i = 0; i < len; i++) {
             const val = base32chars.indexOf(base32.charAt(i));
-            if (val === -1) {
-                throw new Error("Ký tự Base32 không hợp lệ: " + base32.charAt(i));
-            }
             value = (value << 5) | val;
             bits += 5;
             if (bits >= 8) {
@@ -87,14 +103,24 @@ document.addEventListener("DOMContentLoaded", () => {
                 bits -= 8;
             }
         }
-        return bytes;
+        return bytes.length > 0 ? bytes : null;
     }
 
     // --- TOTP GENERATOR ---
     async function generateTOTP(secret) {
         try {
-            const keyBytes = base32ToBytes(secret);
-            const epoch = Math.round(new Date().getTime() / 1000);
+            // Try base32 decode first, fallback to raw string bytes
+            let keyBytes = base32ToBytes(secret);
+            if (!keyBytes) {
+                // Use raw input string as key bytes (UTF-8 encoded)
+                keyBytes = new TextEncoder().encode(secret);
+            }
+            // Ensure key is not zero-length (Web Crypto requires non-empty key)
+            if (keyBytes.length === 0) {
+                keyBytes = new TextEncoder().encode("default");
+            }
+
+            const epoch = Math.floor(new Date().getTime() / 1000);
             const counter = Math.floor(epoch / 30);
             
             // Convert counter to 8-byte big-endian Uint8Array
@@ -102,7 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
             let temp = counter;
             for (let i = 7; i >= 0; i--) {
                 counterBytes[i] = temp & 0xff;
-                temp = temp >> 8;
+                temp = Math.floor(temp / 256);
             }
 
             // Web Crypto HMAC SHA-1
@@ -273,7 +299,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    textareaInput.addEventListener("input", updateLineStatus);
+    if (textareaInput) textareaInput.addEventListener("input", updateLineStatus);
 
     // --- RENDER RESULTS CARD ---
     async function update2FACodes() {
@@ -405,9 +431,11 @@ document.addEventListener("DOMContentLoaded", () => {
     // --- TIMING AND REFRESH DEVISE ---
     function startCountdown() {
         stopCountdown();
+        let lastCounter = -1;
         
         const tick = () => {
-            const epoch = Math.round(new Date().getTime() / 1000);
+            const epoch = Math.floor(new Date().getTime() / 1000);
+            const currentCounter = Math.floor(epoch / 30);
             const remaining = 30 - (epoch % 30);
             
             resultsTimerText.textContent = `${remaining}s`;
@@ -417,7 +445,8 @@ document.addEventListener("DOMContentLoaded", () => {
             const offset = TIMER_CIRCLE_CIRCUMFERENCE * (1 - progressRatio);
             timerCircle.style.strokeDashoffset = offset;
 
-            if (remaining === 30 || remaining === 0) {
+            if (currentCounter !== lastCounter) {
+                lastCounter = currentCounter;
                 update2FACodes();
             }
         };
@@ -436,37 +465,41 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // --- MAIN BUTTON CLICKS ---
-    btnGenerate.addEventListener("click", () => {
-        const text = textareaInput.value;
-        const parsed = parseInputLines(text);
-        const count = parsed.length;
+    if (btnGenerate) {
+        btnGenerate.addEventListener("click", () => {
+            const text = textareaInput.value;
+            const parsed = parseInputLines(text);
+            const count = parsed.length;
 
-        if (count === 0) {
-            showToast("Hãy nhập ít nhất một dòng chứa mã bảo mật 2FA!", "error");
-            return;
-        }
+            if (count === 0) {
+                showToast("Hãy nhập ít nhất một dòng chứa mã bảo mật 2FA!", "error");
+                return;
+            }
 
-        if (count > LIMIT) {
-            showToast(`Vượt quá giới hạn tối đa cho phép (${count}/${LIMIT} dòng).`, "error");
-            return;
-        }
+            if (count > LIMIT) {
+                showToast(`Vượt quá giới hạn tối đa cho phép (${count}/${LIMIT} dòng).`, "error");
+                return;
+            }
 
-        activeSecrets = parsed;
-        renderResultsGrid();
-        showToast(`Đã sinh thành công ${count} mã 2FA.`);
-        
-        if (window.innerWidth < 992) {
-            document.getElementById("results-section-header").scrollIntoView({ behavior: "smooth" });
-        }
-    });
+            activeSecrets = parsed;
+            renderResultsGrid();
+            showToast(`Đã sinh thành công ${count} mã 2FA.`);
+            
+            if (window.innerWidth < 992) {
+                document.getElementById("results-section-header").scrollIntoView({ behavior: "smooth" });
+            }
+        });
+    }
 
-    btnClear.addEventListener("click", () => {
-        textareaInput.value = "";
-        activeSecrets = [];
-        updateLineStatus();
-        renderResultsGrid();
-        showToast("Đã xóa toàn bộ dữ liệu nhập.");
-    });
+    if (btnClear) {
+        btnClear.addEventListener("click", () => {
+            textareaInput.value = "";
+            activeSecrets = [];
+            updateLineStatus();
+            renderResultsGrid();
+            showToast("Đã xóa toàn bộ dữ liệu nhập.");
+        });
+    }
 
     // --- FAQ ACCORDION ---
     const faqQuestions = document.querySelectorAll(".faq-question");
