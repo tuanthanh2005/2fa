@@ -32,7 +32,7 @@
     <link rel="canonical" href="https://2fa.center/">
 
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="<?= BASE_URL ?>/style.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/style.css?v=<?= @filemtime(ROOT_PATH . '/style.css') ?: time() ?>">
 
     <!-- JSON-LD Structured Data for WebApplication -->
     <script type="application/ld+json">
@@ -125,6 +125,6 @@
     </footer>
 
     <!-- Core Logic JavaScript -->
-    <script src="<?= BASE_URL ?>/app.js"></script>
+    <script src="<?= BASE_URL ?>/app.js?v=<?= @filemtime(ROOT_PATH . '/app.js') ?: time() ?>"></script>
 </body>
 </html>
