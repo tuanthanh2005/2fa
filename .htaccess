@@ -1,8 +1,20 @@
 RewriteEngine On
 
 # Allow direct access to existing physical files or directories
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Compatibility fallbacks for asset paths
+RewriteRule ^css/style\.css$ style.css [L]
+RewriteRule ^js/app\.js$ app.js [L]
+RewriteRule ^images/fav\.png$ fav.png [L]
+
+# Fallback to public folder if file exists there
+RewriteCond %{DOCUMENT_ROOT}/public/$1 -f
+RewriteRule ^(.*)$ public/$1 [L]
 
 # Redirect all other requests to index.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ index.php [L,QSA]

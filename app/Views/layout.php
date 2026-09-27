@@ -6,7 +6,7 @@
     
     <!-- Primary Meta Tags -->
     <title><?= htmlspecialchars($title ?? $config['site_title']) ?></title>
-    <link rel="icon" type="image/png" href="<?= BASE_URL ?>/images/fav.png">
+    <link rel="icon" type="image/png" href="<?= BASE_URL ?>/fav.png">
     <meta name="title" content="<?= htmlspecialchars($title ?? $config['site_title']) ?>">
     <meta name="description" content="<?= htmlspecialchars($description ?? $config['site_description']) ?>">
     <meta name="keywords" content="<?= htmlspecialchars($keywords ?? $config['site_keywords']) ?>">
@@ -19,20 +19,20 @@
     <meta property="og:url" content="https://2fa.center/">
     <meta property="og:title" content="<?= htmlspecialchars($title ?? $config['site_title']) ?>">
     <meta property="og:description" content="<?= htmlspecialchars($description ?? $config['site_description']) ?>">
-    <meta property="og:image" content="https://2fa.center/images/fav.png">
+    <meta property="og:image" content="https://2fa.center/fav.png">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://2fa.center/">
     <meta property="twitter:title" content="<?= htmlspecialchars($title ?? $config['site_title']) ?>">
     <meta property="twitter:description" content="<?= htmlspecialchars($description ?? $config['site_description']) ?>">
-    <meta property="twitter:image" content="https://2fa.center/images/fav.png">
+    <meta property="twitter:image" content="https://2fa.center/fav.png">
 
     <!-- Canonical URL -->
     <link rel="canonical" href="https://2fa.center/">
 
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="<?= BASE_URL ?>/css/style.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/style.css">
 
     <!-- JSON-LD Structured Data for WebApplication -->
     <script type="application/ld+json">
@@ -125,6 +125,6 @@
     </footer>
 
     <!-- Core Logic JavaScript -->
-    <script src="<?= BASE_URL ?>/js/app.js"></script>
+    <script src="<?= BASE_URL ?>/app.js"></script>
 </body>
 </html>
