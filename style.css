@@ -457,13 +457,6 @@ main.container {
     padding: 1.25rem;
     position: relative;
     overflow: hidden;
-    transition: all var(--transition-normal);
-}
-
-.result-card:hover {
-    border-color: var(--border-focus);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-sm);
 }
 
 .result-card-header {
@@ -538,13 +531,6 @@ main.container {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all var(--transition-fast);
-}
-
-.btn-copy:hover {
-    color: var(--text-primary);
-    border-color: var(--text-secondary);
-    background-color: var(--border-color);
 }
 
 .result-secret-area {
@@ -571,10 +557,6 @@ main.container {
     border: none;
     color: var(--text-muted);
     cursor: pointer;
-}
-
-.btn-toggle-secret:hover {
-    color: var(--text-secondary);
 }
 
 /* ========== SEO CONTENT (on separate pages) ========== */
