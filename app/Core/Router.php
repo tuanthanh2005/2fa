@@ -38,7 +38,12 @@ class Router {
         $requestMethod = strtoupper($requestMethod);
 
         foreach ($this->routes as $route) {
-            if ($route['method'] === $requestMethod && $route['path'] === $url) {
+            if ($route['method'] !== $requestMethod) {
+                continue;
+            }
+
+            // Exact match
+            if ($route['path'] === $url) {
                 $controllerClass = $route['controller'];
                 $action = $route['action'];
 
@@ -47,6 +52,25 @@ class Router {
                     if (method_exists($controller, $action)) {
                         $controller->$action();
                         return;
+                    }
+                }
+            }
+
+            // Parameterized match: e.g. blog/{slug}
+            if (strpos($route['path'], '{') !== false) {
+                $pattern = preg_replace('/\{[a-zA-Z0-9_]+\}/', '([^/]+)', $route['path']);
+                $pattern = '#^' . $pattern . '$#';
+                if (preg_match($pattern, $url, $matches)) {
+                    array_shift($matches); // Remove full match
+                    $controllerClass = $route['controller'];
+                    $action = $route['action'];
+
+                    if (class_exists($controllerClass)) {
+                        $controller = new $controllerClass();
+                        if (method_exists($controller, $action)) {
+                            $controller->$action(...$matches);
+                            return;
+                        }
                     }
                 }
             }

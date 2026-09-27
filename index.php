@@ -46,6 +46,8 @@ $config = file_exists($configFile) ? require $configFile : [];
 // 3. Define Routes
 $router->add('GET', '/', \App\Controllers\HomeController::class, 'index');
 $router->add('GET', '/index.php', \App\Controllers\HomeController::class, 'index');
+$router->add('GET', '/blog', \App\Controllers\BlogController::class, 'index');
+$router->add('GET', '/blog/{slug}', \App\Controllers\BlogController::class, 'detail');
 $router->add('GET', '/about', \App\Controllers\HomeController::class, 'about');
 $router->add('GET', '/privacy', \App\Controllers\HomeController::class, 'privacy');
 $router->add('GET', '/terms', \App\Controllers\HomeController::class, 'terms');
@@ -59,11 +61,10 @@ $requestMethod = $_SERVER['REQUEST_METHOD'];
 
 // Strip subdirectories if hosting inside a subfolder (e.g. localhost/website_2fa_2fa/...)
 // We can strip path segments up to public/ to make it work in any directory structure!
-$scriptName = $_SERVER['SCRIPT_NAME']; // e.g. /website_2fa_2fa/public/index.php
-$baseDir = dirname($scriptName); // e.g. /website_2fa_2fa/public or /website_2fa_2fa/
-$baseDir = str_replace('\\', '/', $baseDir);
+$scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
+$baseDir = str_replace('\\', '/', dirname($scriptName));
 
-if ($baseDir !== '/' && strpos($requestUri, $baseDir) === 0) {
+if (in_array(basename($scriptName), ['index.php', 'router.php']) && $baseDir !== '/' && $baseDir !== '.' && strpos($requestUri, $baseDir) === 0) {
     $requestUri = substr($requestUri, strlen($baseDir));
 }
 

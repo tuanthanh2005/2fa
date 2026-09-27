@@ -86,6 +86,7 @@
                 <!-- Nav links -->
                 <nav id="nav-menu" class="nav-menu">
                     <a href="<?= BASE_URL ?>/" class="nav-link">Trang chủ</a>
+                    <a href="<?= BASE_URL ?>/blog" class="nav-link">Blog</a>
                     <a href="<?= BASE_URL ?>/about" class="nav-link">Giới thiệu</a>
                     <a href="<?= BASE_URL ?>/privacy" class="nav-link">Bảo mật</a>
                     <a href="<?= BASE_URL ?>/terms" class="nav-link">Điều khoản</a>
@@ -115,6 +116,7 @@
             <div class="footer-compact">
                 <p>&copy; 2026 2FA Center. Bảo lưu mọi quyền.</p>
                 <div class="footer-links-row">
+                    <a href="<?= BASE_URL ?>/blog">Blog</a>
                     <a href="<?= BASE_URL ?>/about">Giới thiệu</a>
                     <a href="<?= BASE_URL ?>/privacy">Bảo mật</a>
                     <a href="<?= BASE_URL ?>/terms">Điều khoản</a>
