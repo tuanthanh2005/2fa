@@ -3,8 +3,16 @@
  * Front Controller & PSR-4 Autoloader
  */
 
-// Define workspace roots
-define('ROOT_PATH', realpath(__DIR__));
+// Define workspace roots (Tự động nhận diện thư mục app)
+if (is_dir(__DIR__ . '/app')) {
+    define('ROOT_PATH', realpath(__DIR__));
+} elseif (is_dir(__DIR__ . '/../2fa/app')) {
+    define('ROOT_PATH', realpath(__DIR__ . '/../2fa'));
+} elseif (is_dir(__DIR__ . '/../app')) {
+    define('ROOT_PATH', realpath(__DIR__ . '/..'));
+} else {
+    define('ROOT_PATH', realpath(__DIR__));
+}
 define('APP_PATH', ROOT_PATH . '/app');
 define('BASE_URL', str_replace('\\', '/', rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\')));
 
@@ -32,7 +40,8 @@ use App\Core\Router;
 $router = new Router();
 
 // Load Config
-$config = require ROOT_PATH . '/config/config.php';
+$configFile = ROOT_PATH . '/config/config.php';
+$config = file_exists($configFile) ? require $configFile : [];
 
 // 3. Define Routes
 $router->add('GET', '/', \App\Controllers\HomeController::class, 'index');
